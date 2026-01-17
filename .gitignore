@@ -1,3 +1,7 @@
 # Environment files and secrets
 .env
 credentials.json
+token.json
+
+# Python directories
+__pycahce__/
