@@ -20,12 +20,15 @@ def load_creds() -> Credentials:
             try:
                 creds.refresh(Request())
             except Exception:
-                creds = _new_login()
-    else:
-        creds = _new_login()
-    
+                creds = None
+        
+        if not creds:
+            creds = _new_login()
+
     with open(TOKEN_FILE, "w") as token:
         token.write(creds.to_json())
+
+    return creds
 
 def _new_login() -> Credentials:
     """
