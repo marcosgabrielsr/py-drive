@@ -1,1 +1,1 @@
-from .auth import Credentials
+from .auth import load_creds
