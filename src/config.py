@@ -1,6 +1,12 @@
-import os.path
-from core import Credentials, SCOPES
+import os
+from pathlib import Path
+from dotenv import load_dotenv
 
-def load_creds(path: str = "token.json"):
-    if os.path.exists(path):
-        return Credentials.from_authorized_user_file("token.json", SCOPES)
+load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+CREDENTIALS_FILE = BASE_DIR/os.getenv("GDRIVE_CREDENTIALS", "credentials.json")
+TOKEN_FILE = BASE_DIR/os.getenv("GDRIVE_TOKEN", "token.json")
+
+SCOPES = ["https://www.googleapis.com/auth/drive.metadata.readonly"]
