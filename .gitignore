@@ -5,3 +5,5 @@ token.json
 
 # Python directories
 __pycahce__/
+src/__pycache__/
+src/core/__pycache__/
