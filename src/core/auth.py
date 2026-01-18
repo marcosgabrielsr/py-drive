@@ -13,16 +13,26 @@ def load_creds() -> Credentials:
     creds = None
 
     if os.path.exists(TOKEN_FILE):
-        creds = Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
+        creds = Credentials.from_authorized_user_file(str(TOKEN_FILE), SCOPES)
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+            try:
+                creds.refresh(Request())
+            except Exception:
+                creds = _new_login()
     else:
-        flow = InstalledAppFlow.from_client_secrets_file(
-            CREDENTIALS_FILE, SCOPES
-        )
-        creds = flow.run_local_server(port=0)
+        creds = _new_login()
     
     with open(TOKEN_FILE, "w") as token:
         token.write(creds.to_json())
+
+def _new_login() -> Credentials:
+    """
+    Auxiliar intern function to open the browser and exec login
+    """
+    if not os.path.exists(CREDENTIALS_FILE):
+        raise FileNotFoundError(f"Credentials file not found on: {CREDENTIALS_FILE}")
+    
+    flow = InstalledAppFlow.from_client_secrets_file(str(CREDENTIALS_FILE), SCOPES)
+    return flow.run_local_server(port=0)
