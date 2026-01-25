@@ -51,3 +51,5 @@ Configuração centralizada de logs.
 * Garante que logs de erro sejam persistidos em arquivo (`sync.log`) para auditoria futura, enquanto logs informativos podem ser exibidos no stdout.
 
 
+## Referências
+- Documentação PyDoc da API do Google Drive: https://developers.google.com/resources/api-libraries/documentation/drive/v3/python/latest/drive_v3.files.html
