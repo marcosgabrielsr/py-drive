@@ -53,3 +53,4 @@ Configuração centralizada de logs.
 
 ## Referências
 - Documentação PyDoc da API do Google Drive: https://developers.google.com/resources/api-libraries/documentation/drive/v3/python/latest/drive_v3.files.html
+- Como criar um programa de lista de tarefas de linha de comando com Python: https://realpython.com/python-typer-cli/
