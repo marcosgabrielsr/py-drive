@@ -7,3 +7,4 @@ token.json
 __pycahce__/
 src/__pycache__/
 src/core/__pycache__/
+tests/__pycache__
