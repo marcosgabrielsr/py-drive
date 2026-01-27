@@ -1,8 +1,10 @@
-from .core import load_creds, list_files
+"""Py-Drive entry point script."""
+# src/___main__.py
+
+from src import cli, __app_name__
 
 def main():
-    creds = load_creds()
-    list_files(creds)
+    cli.app(prog_name=__app_name__)
 
-if __name__ == "__main__":
+if __name__=="__main__":
     main()
