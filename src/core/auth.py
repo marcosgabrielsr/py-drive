@@ -1,3 +1,6 @@
+"""This module provides the OAtuh 2.0 autentication functionality"""
+# src/core/auth.py
+
 import os
 
 from google.auth.transport.requests import Request

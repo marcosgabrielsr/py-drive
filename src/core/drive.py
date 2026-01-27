@@ -1,3 +1,6 @@
+"""This module provides Google Drive API v3 functionality"""
+# src/core/drive.py
+
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
