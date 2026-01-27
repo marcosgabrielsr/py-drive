@@ -6,6 +6,9 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 def list_files(creds:Credentials, pg_size:int=10):
+    """
+    List the number of files passed as a parameter, 10 by default
+    """
     try:
         service = build("drive", "v3", credentials=creds)
 
