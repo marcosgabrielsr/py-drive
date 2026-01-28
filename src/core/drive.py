@@ -5,7 +5,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-def list_files(creds:Credentials, pg_size:int=10):
+def list_files(creds:Credentials,order:str=None,pg_size:int=10) -> list:
     """
     List the number of files passed as a parameter, 10 by default
     """
@@ -14,7 +14,7 @@ def list_files(creds:Credentials, pg_size:int=10):
 
         results = (
             service.files()
-            .list(pageSize=10, fields="nextPageToken, files (id, name)")
+            .list(orderBy=order,pageSize=pg_size,fields="nextPageToken, files (id, name)")
             .execute()
         )
         items = results.get("files", [])
@@ -23,8 +23,8 @@ def list_files(creds:Credentials, pg_size:int=10):
             print("No files found.")
             return
         
-        print("Files:")
-        for item in items:
-            print(f"{item['name']} ({item['id']})")
+        return items
+    
     except HttpError as error:
         print(f"An error ocurred: {error}")
+        return
