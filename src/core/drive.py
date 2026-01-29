@@ -5,7 +5,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-def build_query(only_folders:bool=False,only_not_shared:bool=True,name:str=None,in_name:str=None) -> str:
+def build_query(only_folders:bool=False,only_my_own:bool=True,name:str=None,in_name:str=None) -> str:
     """Build the query to filter the search on google drive
 
     Args:
@@ -20,7 +20,7 @@ def build_query(only_folders:bool=False,only_not_shared:bool=True,name:str=None,
     query = "trashed=false"
 
     query = (query,f"{query} and mimeType='application/vnd.google-apps.folder'")[only_folders]
-    query = (query,f"{query} and 'me' in owners")[only_not_shared]
+    query = (query,f"{query} and 'me' in owners")[only_my_own]
     query = (query,f"{query} and name = '{name}'")[name is not None]
     query = (query,f"{query} and name contains '{in_name}'")[in_name is not None]
 
@@ -31,18 +31,17 @@ def list_files(
         order:str=None,
         pg_size:int=None,
         folders:bool=False,
-        not_shared:bool=True,
+        my_own:bool=True,
         name:str=None,
         in_name:str=None
     ) -> list:
     """List and search files from drive
     """
-    query = build_query(only_folders=folders,only_not_shared=not_shared,name=name,in_name=in_name)
+    query = build_query(only_folders=folders,only_my_own=my_own,name=name,in_name=in_name)
     files = []
     page_token = None
 
     try:
-        print(f"\ncurrent query: {query}")
         service = build("drive","v3",credentials=creds)
 
         while True:
