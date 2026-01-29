@@ -5,16 +5,19 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-def list_files(creds:Credentials,order:str=None,pg_size:int=10) -> list:
+def list_files(creds:Credentials,order:str=None,pg_size:int=None,folders:bool=False) -> list:
     """
-    List the number of files passed as a parameter, 10 by default
+    List and search files from drive
     """
+    query = "mimeType='application/vnd.google-apps.folder'" if folders else None
+    query = query+"trashed=false" if query is None else "trashed=false"
+
     try:
         service = build("drive", "v3", credentials=creds)
 
         results = (
             service.files()
-            .list(orderBy=order,pageSize=pg_size,fields="nextPageToken, files (id, name)")
+            .list(orderBy=order,pageSize=pg_size,fields="nextPageToken, files (id, name,mimeType)",q=query)
             .execute()
         )
         items = results.get("files", [])
