@@ -16,7 +16,7 @@ def build_query(
 
     Args:
         only_folders: bool, option to pick up only folders.
-        only_not_shared: bool, option to only retrieve files where I am one of the owners.
+        only_my_own: bool, option to only retrieve files where I am one of the owners.
         name: str, Name of the file to be searched for.
         in_name: str, text that can be part of the file name.
         not_trashed: str, option to pick up only files that not in trash.
@@ -43,6 +43,19 @@ def list_files(
         not_trashed:bool=True
     ) -> list:
     """List and search files from drive
+
+    Args:
+        creds: Credentials, access token for authentication.
+        oder: str, query listing order.
+        pg_size: int, number of files read per page.
+        folder: bool, option to pick up only folders.
+        my_own: bool, option to only retrieve files where I am one of the owners.
+        name: str, Name of the file to be searched for.
+        in_name: str, text that can be part of the file name.
+        not_trashed: str, option to pick up only files that not in trash.
+
+    Returns:
+        Return a dictionary list where each element contain the files properties (id, name and mimeType in this case).
     """
     query = build_query(only_folders=folders,only_my_own=my_own,name=name,in_name=in_name,not_trashed=not_trashed)
     files = []
