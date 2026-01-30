@@ -1,9 +1,14 @@
 """This module provides Google Drive API v3 functionality"""
 # src/core/drive.py
 
+import io
+
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaIoBaseDownload
+
+from src.config import DEFAULT_DOWNLOAD_DIR
 
 def build_query(
         only_folders:bool=False,
@@ -91,3 +96,40 @@ def list_files(
     except HttpError as error:
         print(f"An error ocurred: {error}")
         return
+
+def download_file(
+        creds:Credentials,
+        real_file_id:str=None,
+        final_path:str=DEFAULT_DOWNLOAD_DIR
+    ) -> str:
+    """Make the download from google drive
+    
+    Args:
+        creds: Credentials, access token for authentication.
+        real_file_id: str, id of the file to download.
+        final_path: str, local path to download.
+    
+    Returns:
+        IO object with location
+    """
+
+    print(f"\nfinal path: {final_path}.")
+
+    try:
+        service = build("drive","v3",credentials=creds)
+        file_id = real_file_id
+
+        request = service.files().get_media(fileID=file_id)
+        file = io.BytesIO()
+        downloader = MediaIoBaseDownload(file,request)
+        done = False
+
+        while done is False:
+            status, done = downloader.next_chunk()
+            print(f"Download {int(status.progress() * 100)}")
+    
+    except HttpError as error:
+        print(f"An error occurred: {error}")
+        file = None
+
+    return file.getvalue()
