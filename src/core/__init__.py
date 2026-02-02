@@ -1,2 +1,2 @@
-from .auth import load_creds
+from .auth import Credentials,load_creds
 from .drive import list_files
