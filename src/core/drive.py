@@ -45,7 +45,8 @@ def list_files(
         my_own:bool=True,
         name:str=None,
         in_name:str=None,
-        not_trashed:bool=True
+        not_trashed:bool=False,
+        show_query:bool=False
     ) -> list:
     """List and search files from drive
 
@@ -58,6 +59,7 @@ def list_files(
         name: str, Name of the file to be searched for.
         in_name: str, text that can be part of the file name.
         not_trashed: str, option to pick up only files that not in trash.
+        show_query: bool, option to print or not the query used to search.
 
     Returns:
         Return a dictionary list where each element contain the files properties (id, name and mimeType in this case).
@@ -68,6 +70,9 @@ def list_files(
 
     try:
         service = build("drive","v3",credentials=creds)
+
+        if show_query:
+            print(f"\ncurrent query:\n===> {query}")
 
         while True:
             results = (
