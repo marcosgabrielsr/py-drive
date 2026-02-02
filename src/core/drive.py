@@ -127,13 +127,11 @@ def download_file(
 
     elif real_file_id is None:
         print(f"Searching for the file id...")
-        sfile = list_files(creds=creds,name=file_name)
+        sfile = search_files(creds=creds,name=file_name)
 
         if sfile is None:
             print("Error: file not found on drive")
             return
-        
-        real_file_id = sfile['id']
     
     else:
         print(f"File ID informed. Checking if the file exists")
