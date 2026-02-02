@@ -6,6 +6,11 @@ def test_google_drive_list_files():
     creds = load_creds()
     files = list_files(creds=creds)
 
+    print(f"\nFiles: ")
+    for file in files:
+        print(f"-> {file}\n")
+    print(f"Number of files: {len(files)}")
+
     assert files is not None
     assert isinstance(files,list)
     
