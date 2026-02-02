@@ -37,7 +37,7 @@ def build_query(
 
     return query
 
-def list_files(
+def search_files(
         creds:Credentials,
         order:str=None,
         pg_size:int=None,
@@ -104,6 +104,7 @@ def list_files(
 
 def download_file(
         creds:Credentials,
+        file_name:str=None,
         real_file_id:str=None,
         final_path:str=DEFAULT_DOWNLOAD_DIR
     ) -> str:
@@ -119,6 +120,25 @@ def download_file(
     """
 
     print(f"\nfinal path: {final_path}.")
+
+    if file_name is None and real_file_id is None:
+        print(f"Error: name and id not informed!")
+        return
+
+    elif real_file_id is None:
+        print(f"Searching for the file id...")
+        sfile = list_files(creds=creds,name=file_name)
+
+        if sfile is None:
+            print("Error: file not found on drive")
+            return
+        
+        real_file_id = sfile['id']
+    
+    else:
+        print(f"File ID informed. Checking if the file exists")
+        files = search_files(creds)
+
 
     try:
         service = build("drive","v3",credentials=creds)
