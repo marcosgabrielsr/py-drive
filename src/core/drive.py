@@ -48,7 +48,8 @@ def search_files(
         not_trashed:bool=False,
         show_query:bool=False
     ) -> list:
-    """List and search files from drive
+    """
+    List and search files from drive
 
     Args:
         creds: Credentials, access token for authentication.
@@ -102,6 +103,40 @@ def search_files(
         print(f"An error ocurred: {error}")
         return
 
+def list_downloads_options(files:list=None) -> str:
+    """
+    List all of the options finded by the search_files on download_files function
+    
+    Args:
+        files: list, list of the finded files.
+
+    Returns:
+        'id' of the selected optino
+    """
+    cancel_option = len(files)+1
+    
+    while True:
+        try:
+            print(f"Listing download options (total: {len(files)})")
+            for file,i in files:
+                print(f"\t[{i}] {file}")
+            print(f"\t[{cancel_option}] Cancel")
+
+            selected = int(input("Type the number:"))
+
+            if selected >= 0 and selected < cancel_option:
+                return (files[selected])['id']
+            elif selected == cancel_option:
+                return None
+            else:
+                print('Invalid option.')
+
+        except TypeError:
+            print('You must type integer numbers!')
+        
+        except Exception as e:
+            print('Exeception: {e}')
+
 def download_file(
         creds:Credentials,
         file_name:str=None,
@@ -112,6 +147,7 @@ def download_file(
     
     Args:
         creds: Credentials, access token for authentication.
+        file_name: str, name of the file to download.
         real_file_id: str, id of the file to download.
         final_path: str, local path to download.
     
@@ -119,7 +155,7 @@ def download_file(
         IO object with location
     """
 
-    print(f"\nfinal path: {final_path}.")
+    print(f"\nFinal path: {final_path}.")
 
     if file_name is None and real_file_id is None:
         print(f"Error: name and id not informed!")
@@ -128,15 +164,18 @@ def download_file(
     elif real_file_id is None:
         print(f"Searching for the file id...")
         sfile = search_files(creds=creds,name=file_name)
-
+        
         if sfile is None:
             print("Error: file not found on drive")
             return
+        elif len(sfile) == 1:
+            real_file_id = (sfile[0])['id']
+        else:
+            list_downloads_options(sfile)
     
     else:
         print(f"File ID informed. Checking if the file exists")
         files = search_files(creds)
-
 
     try:
         service = build("drive","v3",credentials=creds)
