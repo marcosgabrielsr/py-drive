@@ -1,10 +1,10 @@
 # tests/test_list.py
 
-from src.core import load_creds, list_files
+from src.core import load_creds, search_files
 
 def test_google_drive_list_files():
     creds = load_creds()
-    files = list_files(creds=creds)
+    files = search_files(creds=creds)
 
     print(f"\nFiles: ")
     for file in files:
