@@ -132,54 +132,45 @@ def list_downloads_options(files:list=None) -> str:
                 print('Invalid option.')
 
         except TypeError:
-            print('You must type integer numbers!')
+            print('You must type integer numbers.')
         
         except Exception as e:
             print('Exeception: {e}')
 
-def download_file(
-        creds:Credentials,
-        file_name:str=None,
-        real_file_id:str=None,
-        final_path:str=DEFAULT_DOWNLOAD_DIR
-    ) -> str:
-    """Make the download from google drive
+
+def get_id_by_name(creds:Credentials,file_name:str) -> str:
+    """
+    Responsible for finding the ID by name
+
+    Args: 
+        creds: Credentials, access token for authentication.
+        name: str, name of the file.
+
+    Returns:
+        Return the ID of the file.
+    """
+    file_data = search_files(creds,name=file_name)
+
+    if len(file_data) == 1:
+        return (file_data[0])['id']
+    else:
+        return list_downloads_options(file_data)
+
+def execute_download(creds:Credentials,_file_id:str,download_path:str) -> io.BytesIO:
+    """
+    Make the download of a file from Google Drive
     
     Args:
         creds: Credentials, access token for authentication.
-        file_name: str, name of the file to download.
-        real_file_id: str, id of the file to download.
-        final_path: str, local path to download.
+        _file_id: str, file id.
+        download_path: str, path where the file will be saved.
     
     Returns:
-        IO object with location
+        Return an IO object
     """
-
-    print(f"\nFinal path: {final_path}.")
-
-    if file_name is None and real_file_id is None:
-        print(f"Error: name and id not informed!")
-        return
-
-    elif real_file_id is None:
-        print(f"Searching for the file id...")
-        sfile = search_files(creds=creds,name=file_name)
-        
-        if sfile is None:
-            print("Error: file not found on drive")
-            return
-        elif len(sfile) == 1:
-            real_file_id = (sfile[0])['id']
-        else:
-            list_downloads_options(sfile)
-    
-    else:
-        print(f"File ID informed. Checking if the file exists")
-        files = search_files(creds)
-
     try:
         service = build("drive","v3",credentials=creds)
-        file_id = real_file_id
+        file_id = _file_id
 
         request = service.files().get_media(fileID=file_id)
         file = io.BytesIO()
@@ -193,5 +184,35 @@ def download_file(
     except HttpError as error:
         print(f"An error occurred: {error}")
         file = None
+
+    return file
+
+def download_file(
+        creds:Credentials,
+        file_name:str=None,
+        real_file_id:str=None,
+        final_path:str=DEFAULT_DOWNLOAD_DIR
+    ) -> str:
+    """
+    Define the file id and makes the download of a file from google drive
+
+    Args:
+        creds: Credentials, access token for authentication.
+        file_name: str, name of the file to download.
+        real_file_id: str, id of the file to download.
+        final_path: str, local path to download.
+    
+    Returns:
+        IO object with location.
+    """
+    if file_name is None and real_file_id is None:
+        print(f"Error: name and id not informed!")
+        return
+    elif real_file_id is None:
+        _file_id = get_id_by_name(creds,file_name)
+    else:
+        _file_id = real_file_id
+    
+    file = execute_download(creds,_file_id,final_path)
 
     return file.getvalue()
